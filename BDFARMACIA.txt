@@ -1,0 +1,185 @@
+drop database if exists `dbfarmacia`;
+
+CREATE DATABASE IF NOT EXISTS `dbfarmacia`;
+
+use `dbfarmacia`;
+
+-- TABLA EMPLEADOS
+CREATE TABLE IF NOT EXISTS `empleados` (
+  `id_empleado` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `apellido` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `dni` varchar(100) DEFAULT NULL,
+  `direccion` varchar(100) DEFAULT NULL,
+  `correo` varchar(100) DEFAULT NULL,
+  `cargo` varchar(100) DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `password` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_empleado`),
+  UNIQUE KEY `empleados_unique_dni` (`dni`),
+  UNIQUE KEY `empleados_unique_username` (`username`),
+  UNIQUE KEY `empleados_unique_correo` (`correo`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- TABLA CLIENTES
+CREATE TABLE IF NOT EXISTS `clientes` (
+  `id_cliente` int NOT NULL AUTO_INCREMENT,
+  `nombres` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `apellidos` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `direccion` varchar(100) DEFAULT NULL,
+  `telefono` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_cliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- TABLA PROVEEDORES
+CREATE TABLE IF NOT EXISTS `proveedores` (
+  `id_proveedor` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) DEFAULT NULL,
+  `direccion` varchar(100) DEFAULT NULL,
+  `telefono` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_proveedor`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- TABLA PRODUCTOS
+CREATE TABLE IF NOT EXISTS `productos` (
+  `id_producto` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) DEFAULT NULL,
+  `descripcion` varchar(100) DEFAULT NULL,
+  `id_proveedor` int DEFAULT NULL,
+  `precio` double DEFAULT NULL,
+  `stock` int DEFAULT NULL,
+  PRIMARY KEY (`id_producto`),
+  KEY `productos_proveedores_FK` (`id_proveedor`),
+  CONSTRAINT `productos_proveedores_FK` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- TABLA VENTAS
+CREATE TABLE IF NOT EXISTS `ventas` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `id_empleado` int DEFAULT NULL,
+  `id_cliente` int DEFAULT NULL,
+  `fecha_venta` date DEFAULT NULL,
+  `importe_total` double DEFAULT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `ventas_empleados_FK` (`id_empleado`),
+  KEY `ventas_clientes_FK` (`id_cliente`),
+  CONSTRAINT `ventas_clientes_FK` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`),
+  CONSTRAINT `ventas_empleados_FK` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- TABLA DETALLE VENTA
+CREATE TABLE IF NOT EXISTS `detalle_venta` (
+  `id_detalle` int NOT NULL AUTO_INCREMENT,
+  `id_venta` int DEFAULT NULL,
+  `id_producto` int DEFAULT NULL,
+  `cantidad` int DEFAULT NULL,
+  `precio_unitario` double DEFAULT NULL,
+  PRIMARY KEY (`id_detalle`),
+  KEY `detalle_venta_ventas_FK` (`id_venta`),
+  KEY `detalle_venta_productos_FK` (`id_producto`),
+  CONSTRAINT `detalle_venta_productos_FK` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`),
+  CONSTRAINT `detalle_venta_ventas_FK` FOREIGN KEY (`id_venta`) REFERENCES `ventas` (`id_venta`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- INSERTAR REGISTROS EMPLEADOS
+INSERT INTO empleados (nombre, apellido, dni, direccion, correo, cargo, username, password) values
+('Ernesto', 'Falcon Colos', '87654321', 'Mi casa', 'mik66@gmail.com', 'Vendedor', 'er123', 'sigordo24'), 
+('Cristhian', 'Vasquez', '64157474', 'Su casa', 'cris11@gmai.com', 'Vendedor', 'cris123', 'noseassapo'),
+('Carlos', 'González', '12345678A', 'Calle 123', 'carlos@example.com', 'Gerente', 'carlos123', 'password123'),
+('Ana', 'Martínez', '23456789B', 'Avenida 456', 'ana@example.com', 'Vendedor', 'ana456', 'password456'),
+('Pedro', 'Gómez', '34567890C', 'Carrera 789', 'pedro@example.com', 'Cajero', 'pedro789', 'password789'),
+('Luisa', 'Fernández', '45678901D', 'Plaza 101', 'luisa@example.com', 'Gerente', 'luisa101', 'password101'),
+('María', 'López', '56789012E', 'Avenida 202', 'maria@example.com', 'Vendedor', 'maria202', 'password202'),
+('Juan', 'Pérez', '67890123F', 'Calle 303', 'juan@example.com', 'Cajero', 'juan303', 'password303'),
+('Sofía', 'García', '78901234G', 'Carrera 404', 'sofia@example.com', 'Gerente', 'sofia404', 'password404'),
+('Diego', 'Díaz', '89012345H', 'Plaza 505', 'diego@example.com', 'Vendedor', 'diego505', 'password505');
+
+-- INSERTAR REGISTROS CLIENTES
+INSERT INTO clientes (nombres, apellidos, direccion, telefono) values
+('Juan', 'Perez', 'Calle 123', '123456789'),
+('Xiomara', 'Arellanos', 'Avenida 456', '654174477'),
+('María', 'López', 'Carrera 789', '234567890'),
+('Carlos', 'García', 'Plaza 101', '876543210'),
+('Ana', 'Martínez', 'Avenida 202', '345678901'),
+('Luis', 'Rodríguez', 'Calle 303', '789012345'),
+('Laura', 'Sánchez', 'Carrera 404', '456789012'),
+('Pedro', 'Gómez', 'Plaza 505', '890123456'),
+('Sofía', 'Hernández', 'Avenida 606', '567890123'),
+('Diego', 'Díaz', 'Calle 707', '901234567');
+
+-- INSERTAR REGISTROS PROVEEDORES
+INSERT INTO proveedores (nombre, direccion, telefono) values
+('PharmaCorp', 'Calle San José 123', '123456789'),
+('BioFarm', 'Avenida Libertad 456', '234567890'),
+('MediCom', 'Carrera 789, Pueblo Nuevo', '345678901'),
+('Farmalab', 'Plaza Mayor 101', '456789012'),
+('HealthCo', 'Calle Principal 202', '567890123'),
+('MediWorld', 'Avenida Central 303', '678901234'),
+('PharmaLife', 'Carrera 404, Barrio Obrero', '789012345'),
+('BioPharm', 'Plaza Bolívar 505', '890123456'),
+('VitaFarm', 'Avenida España 606', '901234567'),
+('MediCare', 'Calle Real 707', '012345678');
+
+-- INSERTAR REGISTROS PRODUCTOS
+INSERT INTO productos (nombre, descripcion, id_proveedor, precio, stock) values
+('Paracetamol', 'Analgesico', 1, 5.5, 80),
+('Ibuprofeno', 'Antiinflamatorio', 3, 4.75, 80),
+('Amoxicilina', 'Antibiótico', 3, 7.2, 10),
+('Omeprazol', 'Antiácido', 4, 6.3, 70),
+('Dipirona', 'Analgésico y antipirético', 5, 3.8, 80),
+('Loratadina', 'Antihistamínico', 6, 8.1, 40),
+('Cetirizina', 'Antihistamínico', 10, 6.5, 50),
+('Hidroclorotiazida', 'Diurético', 8, 9.25, 30),
+('Atorvastatina', 'Reductor de colesterol', 9, 10.2, 20),
+('Amitriptilina', 'Antidepresivo', 10, 11.8, 15),
+('Diclofenaco', 'Analgésico y antiinflamatorio', 1, 7.9, 35),
+('Metformina', 'Antidiabético', 2, 6.4, 25),
+('Enalapril', 'Antihipertensivo', 4, 5.7, 45),
+('Salbutamol', 'Broncodilatador', 4, 4.2, 45),
+('Hidroxicloroquina', 'Antipalúdico', 5, 9.8, 45),
+('Prednisona', 'Antiinflamatorio esteroideo', 6, 8.3, 75),
+('Metoprolol', 'Beta-bloqueador', 7, 7.6, 85),
+('Insulina', 'Antidiabético', 8, 12.5, 95),
+('Warfarina', 'Anticoagulante', 9, 11.7, 105),
+('Fluoxetina', 'Antidepresivo', 10, 10.9, 115);
+
+-- INSERTAR REGISTROS VENTAS
+INSERT INTO dbfarmacia.ventas (id_empleado, id_cliente, fecha_venta, importe_total) values
+(4, 7, '2024-05-08', 72.0),
+(8, 2, '2024-05-08', 78.5),
+(3, 9, '2024-05-08', 94.3),
+(10, 1, '2024-05-08', 42.2),
+(6, 5, '2024-05-08', 112.8),
+(2, 10, '2024-05-08', 77.5),
+(9, 3, '2024-05-08', 62.4),
+(5, 6, '2024-05-08', 120.7),
+(1, 8, '2024-05-08', 86.0),
+(7, 4, '2024-05-08', 51.9);
+
+-- INSERTAR REGISTROS DETALLE VENTA
+INSERT INTO dbfarmacia.detalle_venta (id_venta, id_producto, cantidad, precio_unitario) values
+(1, 1, 10, 5.5),
+(1, 2, 8, 4.75),
+(2, 3, 6, 7.2),
+(2, 4, 7, 6.3),
+(3, 5, 9, 3.8),
+(3, 6, 4, 8.1),
+(4, 7, 5, 6.5),
+(4, 8, 3, 9.25),
+(5, 9, 2, 10.2),
+(5, 10, 3, 11.8),
+(6, 1, 8, 7.9),
+(6, 2, 7, 6.4),
+(7, 3, 6, 5.7),
+(7, 4, 5, 4.2),
+(8, 5, 4, 9.8),
+(8, 6, 3, 8.3),
+(9, 7, 7, 7.6),
+(9, 8, 5, 12.5),
+(10, 9, 3, 11.7),
+(10, 10, 4, 10.9);
