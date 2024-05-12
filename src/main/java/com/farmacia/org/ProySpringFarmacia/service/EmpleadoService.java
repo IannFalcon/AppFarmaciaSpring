@@ -41,7 +41,7 @@ public class EmpleadoService {
         if(userResult == null){
             return new LoginResponse("99", "Nombre de usuario incorrecto.", null);
         }
-        if (new BCryptPasswordEncoder().matches(empleado.getPassword(), userResult.getPassword())){
+        if (!new BCryptPasswordEncoder().matches(empleado.getPassword(), userResult.getPassword())){
             return new LoginResponse("99", "Contraseña incorrecta.", null);
         }
 
